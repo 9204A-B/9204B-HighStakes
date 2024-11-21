@@ -1,5 +1,5 @@
 # 9204B Vex High Stakes Competition Code
-*TODO ->
+### TODO ->
 *Actually organize this
 
-# Managed by Pranjal Gupta & Luke Milan
+## Managed by Pranjal Gupta & Luke Milan
