@@ -11,6 +11,10 @@ CONFIGURATION - MUST BE IN MAIN
 const float track_width = 10;
 const int inertial_port = 20;
 
+// auton selector
+int autonSelect = 0;
+
+
 // drivetrain initialization
 
 pros::MotorGroup left_motor({1, -2, -13}, pros::MotorGearset::blue);
@@ -97,7 +101,46 @@ void disabled() {}
  * This task will exit when the robot is enabled and autonomous or opcontrol
  * starts.
  */
-void competition_initialize() {}
+void competition_initialize() {
+	/**
+ 		TODO MAKE AUTONOMOUS SELECTOR
+   		something like:
+
+     		initialize the button (idk how)
+       		
+       		while (true)
+        	{
+            	if (autonSelect < 3 && button.HIGH)
+            	{
+               	 autonSelect++;
+               	 pros::delay(200);
+            	}
+            	else if (button.HIGH)
+            	{
+             	   autonSelect = 0;
+	               	 pros::delay(200);
+           	 }
+           	 pros::delay(5);
+            	if (autonSelect == 0)
+            	{
+                	pros::lcd::print(0, “Selected Auton 1 (Red Left)”);
+            	}
+            	else if (autonSelect == 1)
+            	{
+              	       pros::lcd::print(0, “Selected Auton 2 (Red Right)”);
+           	 }
+            	else if (autonSelect == 2)
+            	{
+                	pros::lcd::print(0, “Selected Auton 3 (Blue Left)”);
+            	}	
+            	else if (autonSelect == 3)
+            	{
+                	pros::lcd::print(0, “Selected Auton 4 (Blue Right)”);
+            	}
+            	pros::delay(10);
+        }	
+ 	*/
+}
 
 /**
  * Runs the user autonomous code. This function will be started in its own task
@@ -110,7 +153,45 @@ void competition_initialize() {}
  * will be stopped. Re-enabling the robot will restart the task, not re-start it
  * from where it left off.
  */
-void autonomous() {}
+void autonomous() {
+	/**
+ 		-----------------------------------------------------------------------------
+ 		NEED TO TUNE:
+
+   		// set position to x:0, y:0, heading:0
+    		chassis.setPose(0, 0, 0);
+    		// turn to face heading 90 with a very long timeout
+    		chassis.turnToHeading(90, 100000);
+   		lemlib::ControllerSettings angular_controller(2, // proportional gain (kP)
+                                              0, // integral gain (kI)
+                                              10, // derivative gain (kD)
+                                              0, // anti windup
+                                              0, // small error range, in inches
+                                              0, // small error range timeout, in milliseconds
+                                              0, // large error range, in inches
+                                              0, // large error range timeout, in milliseconds
+                                              0 // maximum acceleration (slew)
+		);
+  		USE THIS FOR TUNING ^^^^
+    		INCREASE kP/kD until kD never stops it from oscillating no matter how high
+
+      		REPEAT FOR LATERAL CONTROLLER TOO:
+		lemlib::ControllerSettings lateral_controller(10, // proportional gain (kP)
+                                              0, // integral gain (kI)
+                                              3, // derivative gain (kD)
+                                              0, // anti windup
+                                              0, // small error range, in inches
+                                              0, // small error range timeout, in milliseconds
+                                              0, // large error range, in inches
+                                              0, // large error range timeout, in milliseconds
+                                              0 // maximum acceleration (slew)
+		);
+
+		------------------------------------------------------------------------------
+  		
+ 	*/
+
+}
 
 /**
  * Runs the operator control code. This function will be started in its own task
