@@ -1,4 +1,15 @@
 #include "main.h"
+#include "lemlib/api.hpp" // IWYU pragma: keep
+
+pros::Controller controller1(pros::E_CONTROLLER_MASTER);
+
+pros::Motor intake(8, pros::MotorGearset::green);
+
+pros::Motor ladybrown(11, pros::MotorGearset::red);
+
+
+
+pros::ADIDigitalOut clamp('H');
 
 /*
 
@@ -26,6 +37,7 @@ pros::Imu inertial(inertial_port);
 lemlib::OdomSensors odometry(nullptr, nullptr, nullptr, nullptr, &inertial);
 
 // lateral PID controller
+
 lemlib::ControllerSettings lateral_controller(10, // proportional gain (kP)
                                               0, // integral gain (kI)
                                               3, // derivative gain (kD)
@@ -190,7 +202,8 @@ void autonomous() {
 		------------------------------------------------------------------------------
   		
  	*/
-
+	chassis.setPose(0, 0, 0);
+	chassis.turnToHeading(90, 100000);
 }
 
 /**
@@ -206,6 +219,43 @@ void autonomous() {
  * operator control task will be stopped. Re-enabling the robot will restart the
  * task, not resume it from where it left off.
  */
+
+void driveMotors(){
+    int rightX = controller1.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+    int leftY = controller1.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+    chassis.arcade(leftY, rightX);
+}
+
+void clampUpdate(){
+    if(controller1.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_A)){
+
+        clamp.set_value(HIGH);
+
+    } else if (controller1.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_X)){
+
+        clamp.set_value(LOW);
+        
+    }
+    
+}
+
+void intakeState(int state){
+    intake.move_velocity(200*state);
+    
+}
+
+void intakeUpdate(){
+    if(controller1.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_UP)){
+        intakeState(1);
+    } else if (controller1.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_DOWN)){
+        intakeState(-1);
+    } else if (controller1.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_B)){
+        intakeState(0);
+    }
+    
+    
+    
+}
 
 void opcontrol() {
 	while(true){
